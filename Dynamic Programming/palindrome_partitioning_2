@@ -1,0 +1,81 @@
+//https://leetcode.com/problems/palindrome-partitioning-ii/
+
+//132. Palindrome Partitioning II
+
+//Given a string s, partition s such that every substring of the partition is a palindrome.
+//Return the minimum cuts needed for a palindrome partitioning of s.
+
+
+
+
+class Solution {
+public:
+
+int minCut(string s) {
+   
+    int n=s.length();
+//First Create a dp to store the truthness of palindrome for every substrings//
+
+    bool dp[n][n];
+//Initialize dp with false for precaution//
+
+    memset(dp,false,sizeof(dp));
+//Check for every single char as we all know all of those are palindrome (e.g 'a' ,'z' ,'f' are palindromes itself);
+
+    for(int i=0;i<n;i++){
+        dp[i][i]=true;
+    }
+//Check two consecutive elements whether they are palindrome or not (e.g "ab" is not a palindrome but "aa" is palindrome)
+
+    for(int i=0;i<n-1;i++){
+        if(s[i]==s[i+1]){
+            dp[i][i+1]=true;
+        }
+    }
+// Now traverse for every substring of size>=2 whether they are palindrome or not
+
+//For this checking we can see that if two end elements of a string is same and intermediate string is palindrome then the whloe string is palindrome alse.
+
+    for(int i=n-1;i>=0;i--){
+        for(int j=n-1;j>=0;j--){
+            
+            if((j-i)>=2 && s[i]==s[j] && dp[i+1][j-1]==true){
+                dp[i][j]=true;
+            }
+        }
+    }
+// Now create a cuts array to find outminimum possible cuts for every substring.
+
+    int cuts[n];
+    
+    for(int i=0;i<n;i++){
+//Initialize every element with INT_MAX//
+
+        int temp=INT_MAX;
+// If the substring is palindrome from the start then no cuts are required.
+
+        if(dp[0][i]==true){
+            cuts[i]=0;
+        }
+// Else check every substring with same logic and try to figure out the minimum number of cuts which is needed
+
+        else{
+            
+            for(int j=0;j<i;j++){
+                
+                if(dp[j+1][i]==true && temp>cuts[j]+1){
+                    temp=cuts[j]+1;
+                }
+            }
+            
+            cuts[i]=temp;
+        }
+    }
+    
+    
+    //Return the result.
+    
+    return cuts[n-1];
+    
+}
+};
